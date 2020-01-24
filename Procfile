@@ -1,1 +1,1 @@
-web: python WhoisHelperBot.py
+web: python3 WhoisHelperBot.py
