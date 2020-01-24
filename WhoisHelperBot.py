@@ -126,6 +126,25 @@ def whois_ripe(ip):
     s.close()
     global resp_ripe;
     resp_ripe = response.decode();
+
+def whois_apnic(ip):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("whois.apnic.net", 43))
+    s.send(('-d ' + ip + '\r\n').encode())
+
+    response = b""
+    # setting time limit in secondsmd
+    startTime = time.mktime(dt.now().timetuple())
+    timeLimit = 3
+    while True:
+        elapsedTime = time.mktime(dt.now().timetuple()) - startTime
+        data = s.recv(4096)
+        response += data
+        if (not data) or (elapsedTime >= timeLimit):
+            break
+    s.close()
+    global resp_apnic;
+    resp_apnic = response.decode(); 
     
 def get_whois(message): 
     domain = message.text;
@@ -137,10 +156,13 @@ def get_whois(message):
         bot.send_message(message.from_user.id, 'Сталася помилка. Спробуйте ще раз.');
         return;
     whois(ip);
-    if resp.find('whois.ripe.net',0,len(resp))==-1:
-        bot.send_message(message.from_user.id, resp); 
-    else:
+    if resp.find('whois.ripe.net',0,len(resp))!=-1:
         whois_ripe(ip)
-        bot.send_message(message.from_user.id, resp_ripe);
+        bot.send_message(message.from_user.id, resp_ripe); 
+    elif resp.find('whois.apnic.net',0,len(resp))!=-1:
+        whois_apnic(ip)
+        bot.send_message(message.from_user.id, resp_apnic);
+    else:
+        bot.send_message(message.from_user.id, resp);
  
 bot.polling()
