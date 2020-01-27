@@ -70,6 +70,18 @@ def get_txt(message):
     txt = message.text;
     if txt == '/cancel':
         return;
+    try:
+        txtresolv = dns.resolver.query(txt);
+    except dns.exception.DNSException as e:
+        if isinstance(e, dns.resolver.NXDOMAIN):
+            print("Такого домену не існує: %s" % txt);
+            return;
+        elif isinstance(e, dns.resolver.Timeout):
+            print("Timed out while resolving %s" % txt);
+            return;
+        else:
+            print("Сталася помилка. Спробуйте ще раз.");
+            return;
     txtrecord = b'TXT record:\n';
     enter = b'\n';
     try: 
@@ -81,7 +93,7 @@ def get_txt(message):
         mxtoolboxlink = 'https://mxtoolbox.com/SuperTool.aspx?action=spf%3a' + txt + '&run=toolpage';
         bot.send_message(message.from_user.id, 'Детальна інформація доступна за посиланням: \n' + mxtoolboxlink);
     except Exception:
-        bot.send_message(message.from_user.id, 'Сталася помилка. Спробуйте ще раз.');      
+        bot.send_message(message.from_user.id, 'TXT запис порожній.');      
  
 
 def whois(ip):
