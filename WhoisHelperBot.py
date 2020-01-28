@@ -74,13 +74,13 @@ def get_txt(message):
         txtresolv = dns.resolver.query(txt);
     except dns.exception.DNSException as e:
         if isinstance(e, dns.resolver.NXDOMAIN):
-            print("Такого домену не існує: %s" % txt);
+            bot.send_message(message.from_user.id, "Такого домену не існує: %s" % txt);
             return;
         elif isinstance(e, dns.resolver.Timeout):
-            print("Timed out while resolving %s" % txt);
+            bot.send_message(message.from_user.id, "Timed out while resolving %s" % txt);
             return;
         else:
-            print("Сталася помилка. Спробуйте ще раз.");
+            bot.send_message(message.from_user.id, "Сталася помилка. Спробуйте ще раз.");
             return;
     txtrecord = b'TXT record:\n';
     enter = b'\n';
