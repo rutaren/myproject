@@ -161,7 +161,7 @@ def whois_apnic(ip):
 def whois_afrinic(ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(("whois.afrinic.net", 43))
-    s.send(('-d ' + ip + '\r\n').encode())
+    s.send(('-B -d ' + ip + '\r\n').encode())
     response = b""
     # setting time limit in secondsmd
     startTime = time.mktime(dt.now().timetuple())
