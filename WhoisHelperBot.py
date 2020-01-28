@@ -158,6 +158,42 @@ def whois_apnic(ip):
     global resp_apnic;
     resp_apnic = response.decode(); 
     
+def whois_afrinic(ip):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("whois.afrinic.net", 43))
+    s.send(('-d ' + ip + '\r\n').encode())
+    response = b""
+    # setting time limit in secondsmd
+    startTime = time.mktime(dt.now().timetuple())
+    timeLimit = 3
+    while True:
+        elapsedTime = time.mktime(dt.now().timetuple()) - startTime
+        data = s.recv(4096)
+        response += data
+        if (not data) or (elapsedTime >= timeLimit):
+            break
+    s.close()
+    global resp_afrinic;
+    resp_afrinic = response.decode();
+
+def whois_lacnic(ip):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("whois.lacnic.net", 43))
+    s.send((ip + '\r\n').encode())
+    response = b""
+    # setting time limit in secondsmd
+    startTime = time.mktime(dt.now().timetuple())
+    timeLimit = 3
+    while True:
+        elapsedTime = time.mktime(dt.now().timetuple()) - startTime
+        data = s.recv(4096)
+        response += data
+        if (not data) or (elapsedTime >= timeLimit):
+            break
+    s.close()
+    global resp_lacnic;
+    resp_lacnic = response.decode();
+    
 def get_whois(message): 
     domain = message.text;
     if domain == '/cancel':
@@ -174,6 +210,12 @@ def get_whois(message):
     elif resp.find('whois.apnic.net',0,len(resp))!=-1:
         whois_apnic(ip)
         bot.send_message(message.from_user.id, resp_apnic);
+    elif resp.find('whois.afrinic.net',0,len(resp))!=-1:
+        whois_afrinic(ip);
+        bot.send_message(message.from_user.id, resp_afrinic);
+    elif resp.find('whois.lacnic.net',0,len(resp))!=-1:
+        whois_lacnic(ip);
+        bot.send_message(message.from_user.id, resp_lacnic);
     else:
         bot.send_message(message.from_user.id, resp);
  
