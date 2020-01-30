@@ -90,10 +90,10 @@ def get_txt(message):
             for txt_string in rdata.strings:
                 txtrecord += txt_string + enter;
         bot.send_message(message.from_user.id, txtrecord);
-        mxtoolboxlink = 'https://mxtoolbox.com/SuperTool.aspx?action=spf%3a' + txt + '&run=toolpage';
-        bot.send_message(message.from_user.id, 'Детальна інформація доступна за посиланням: \n' + mxtoolboxlink);
     except Exception:
-        bot.send_message(message.from_user.id, 'TXT запис порожній.');      
+        bot.send_message(message.from_user.id, 'TXT запис порожній.'); 
+    mxtoolboxlink = 'https://mxtoolbox.com/SuperTool.aspx?action=spf%3a' + txt + '&run=toolpage';
+    bot.send_message(message.from_user.id, 'Детальна інформація доступна за посиланням: \n' + mxtoolboxlink);       
  
 
 def whois(ip):
