@@ -82,7 +82,8 @@ def get_txt(message):
         elif e == dns.resolver.NoAnswer:
             pass;
         else:
-            bot.send_message(message.from_user.id, "Сталася помилка. Спробуйте ще раз.");
+            bot.send_message(message.from_user.id, "Сталася помилка. Спробуйте ще раз.\n");
+            bot.send_message(message.from_user.id, "Exception: %s" % e);
             return;
     txtrecord = b'TXT record:\n';
     enter = b'\n';
