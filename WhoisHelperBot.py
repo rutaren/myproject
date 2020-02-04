@@ -79,6 +79,8 @@ def get_txt(message):
         elif isinstance(e, dns.resolver.Timeout):
             bot.send_message(message.from_user.id, "Timed out while resolving %s" % txt);
             return;
+        elif e == dns.resolver.NoAnswer:
+            pass;
         else:
             bot.send_message(message.from_user.id, "Сталася помилка. Спробуйте ще раз.");
             return;
