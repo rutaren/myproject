@@ -115,7 +115,7 @@ def whois(ip):
             break
     s.close()
     global resp;
-    resp = response.decode();  
+    resp = response.decode('utf-8','ignore');  
  
  
 def whois_ripe(ip):
@@ -138,7 +138,7 @@ def whois_ripe(ip):
             break
     s.close()
     global resp_ripe;
-    resp_ripe = response.decode();
+    resp_ripe = response.decode('utf-8','ignore');
 
 def whois_apnic(ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -157,7 +157,7 @@ def whois_apnic(ip):
             break
     s.close()
     global resp_apnic;
-    resp_apnic = response.decode(); 
+    resp_apnic = response.decode('utf-8','ignore'); 
     
 def whois_afrinic(ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -175,7 +175,7 @@ def whois_afrinic(ip):
             break
     s.close()
     global resp_afrinic;
-    resp_afrinic = response.decode();
+    resp_afrinic = response.decode('utf-8','ignore');
 
 def whois_lacnic(ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -193,7 +193,7 @@ def whois_lacnic(ip):
             break
     s.close()
     global resp_lacnic;
-    resp_lacnic = response.decode();
+    resp_lacnic = response.decode('utf-8','ignore');
     
 def get_whois(message): 
     domain = message.text;
