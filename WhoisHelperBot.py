@@ -92,6 +92,7 @@ def get_txt(message):
                 bot.send_message(message.from_user.id, "Сталася помилка. Спробуйте ще раз.\n");
                 bot.send_message(message.from_user.id, "Exception: %s" % e);
                 return;
+        bot.send_message(message.from_user.id, "TXT запис порожній, або відсутній"); 
     mxtoolboxlink = 'https://mxtoolbox.com/SuperTool.aspx?action=spf%3a' + txt + '&run=toolpage';
     bot.send_message(message.from_user.id, 'Детальна інформація доступна за посиланням: \n' + mxtoolboxlink);       
  
