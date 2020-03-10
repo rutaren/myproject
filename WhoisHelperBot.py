@@ -47,7 +47,7 @@ def get_nslookup(message):
             ip_adresses += str(ans) + enter;      
         bot.send_message(message.from_user.id, ip_adresses);
     except Exception:
-             bot.send_message(message.from_user.id, 'Сталася помилка. Спробуйте ще раз.');
+             bot.send_message(message.from_user.id, 'Your request has not been resolved.');
 
 def get_ptr(message):
     ipadr = message.text;
@@ -64,7 +64,7 @@ def get_ptr(message):
             answer_domains += str(domain) + '\n';
         bot.send_message(message.from_user.id, answ + answer_domains);
     except Exception:
-             bot.send_message(message.from_user.id, 'Сталася помилка. Спробуйте ще раз.');
+             bot.send_message(message.from_user.id, 'Your request has not been resolved.');
 
 def get_txt(message):
     txt = message.text;
@@ -97,11 +97,10 @@ def get_txt(message):
     bot.send_message(message.from_user.id, 'Детальна інформація доступна за посиланням: \n' + mxtoolboxlink);       
  
 
-def whois(ip):
-
+def whois(query, host, ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("whois.arin.net", 43))
-    s.send(('n ' + ip + '\r\n').encode())
+    s.connect((host, 43))
+    s.send((query + ip + '\r\n').encode())
 
     response = b""
     # setting time limit in secondsmd
@@ -118,82 +117,6 @@ def whois(ip):
     resp = response.decode('utf-8','ignore');  
  
  
-def whois_ripe(ip):
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("whois.ripe.net", 43))
-    s.send(('-B -r --sources RIPE ' + ip + '\r\n').encode())
-
-    response = b""
-    # setting time limit in secondsmd
-    startTime = time.mktime(dt.now().timetuple())
-    timeLimit = 3
-    flag = 1;
-    while True:
-        elapsedTime = time.mktime(dt.now().timetuple()) - startTime
-        data = s.recv(4096)
-        response += data
-        flag += 1
-        if (not data) or (elapsedTime >= timeLimit):
-            break
-    s.close()
-    global resp_ripe;
-    resp_ripe = response.decode('utf-8','ignore');
-
-def whois_apnic(ip):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("whois.apnic.net", 43))
-    s.send(('-d ' + ip + '\r\n').encode())
-
-    response = b""
-    # setting time limit in secondsmd
-    startTime = time.mktime(dt.now().timetuple())
-    timeLimit = 3
-    while True:
-        elapsedTime = time.mktime(dt.now().timetuple()) - startTime
-        data = s.recv(4096)
-        response += data
-        if (not data) or (elapsedTime >= timeLimit):
-            break
-    s.close()
-    global resp_apnic;
-    resp_apnic = response.decode('utf-8','ignore'); 
-    
-def whois_afrinic(ip):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("whois.afrinic.net", 43))
-    s.send(('-B -d ' + ip + '\r\n').encode())
-    response = b""
-    # setting time limit in secondsmd
-    startTime = time.mktime(dt.now().timetuple())
-    timeLimit = 3
-    while True:
-        elapsedTime = time.mktime(dt.now().timetuple()) - startTime
-        data = s.recv(4096)
-        response += data
-        if (not data) or (elapsedTime >= timeLimit):
-            break
-    s.close()
-    global resp_afrinic;
-    resp_afrinic = response.decode('utf-8','ignore');
-
-def whois_lacnic(ip):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("whois.lacnic.net", 43))
-    s.send((ip + '\r\n').encode())
-    response = b""
-    # setting time limit in secondsmd
-    startTime = time.mktime(dt.now().timetuple())
-    timeLimit = 3
-    while True:
-        elapsedTime = time.mktime(dt.now().timetuple()) - startTime
-        data = s.recv(4096)
-        response += data
-        if (not data) or (elapsedTime >= timeLimit):
-            break
-    s.close()
-    global resp_lacnic;
-    resp_lacnic = response.decode('utf-8','ignore');
     
 def get_whois(message): 
     domain = message.text;
@@ -204,20 +127,15 @@ def get_whois(message):
     except Exception:
         bot.send_message(message.from_user.id, 'Сталася помилка. Спробуйте ще раз.');
         return;
-    whois(ip);
+    whois('n ', 'whois.arin.net', ip);
     if resp.find('whois.ripe.net',0,len(resp))!=-1:
-        whois_ripe(ip)
-        bot.send_message(message.from_user.id, resp_ripe); 
+        whois('-B -r --sources RIPE ', 'whois.ripe.net', ip)
     elif resp.find('whois.apnic.net',0,len(resp))!=-1:
-        whois_apnic(ip)
-        bot.send_message(message.from_user.id, resp_apnic);
+        whois('-d ', 'whois.apnic.net', ip)
     elif resp.find('whois.afrinic.net',0,len(resp))!=-1:
-        whois_afrinic(ip);
-        bot.send_message(message.from_user.id, resp_afrinic);
+        whois('-B -d ', 'whois.afrinic.net', ip);
     elif resp.find('whois.lacnic.net',0,len(resp))!=-1:
-        whois_lacnic(ip);
-        bot.send_message(message.from_user.id, resp_lacnic);
-    else:
-        bot.send_message(message.from_user.id, resp);
+        whois('', 'whois.lacnic.net', ip);
+    bot.send_message(message.from_user.id, resp);
  
 bot.polling()
