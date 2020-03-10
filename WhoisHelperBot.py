@@ -100,7 +100,10 @@ def get_txt(message):
 def whois(query, host, ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, 43))
-    s.send((query + ip + '\r\n').encode())
+    if host =='whois.afrinic.net':
+        s.send(('-B -d ' + ip + '\r\n').encode())
+    else:
+        s.send((query + ip + '\r\n').encode())
 
     response = b""
     # setting time limit in secondsmd
