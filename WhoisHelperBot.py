@@ -100,10 +100,7 @@ def get_txt(message):
 def whois(query, host, ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, 43))
-    if host =='whois.afrinic.net':
-        s.send(('-B -d ' + ip + '\r\n').encode())
-    else:
-        s.send((query + ip + '\r\n').encode())
+    s.send((query + ip + '\r\n').encode())
 
     response = b""
     # setting time limit in secondsmd
@@ -139,6 +136,10 @@ def get_whois(message):
         whois('-B -d ', 'whois.afrinic.net', ip);
     elif resp.find('whois.lacnic.net',0,len(resp))!=-1:
         whois('', 'whois.lacnic.net', ip);
-    bot.send_message(message.from_user.id, resp);
+    if len(resp)>4096:
+        bot.send_message(message.from_user.id, resp[:4096]);
+    else:
+        bot.send_message(message.from_user.id, resp);
+    
  
 bot.polling()
